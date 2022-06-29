@@ -60,6 +60,9 @@
         outline: none !important;
       }
     </style>
+    <script src="modernizr-custom.js"></script>
+    to
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
   </head>
   <body>
     <div id="mydiv1" class="polaroid rotate_right noSelect">
@@ -151,11 +154,20 @@
           pos4 = 0;
         if (document.getElementById(elmnt.id + "header")) {
           // if present, the header is where you move the DIV from:
-          document.getElementById(elmnt.id + "header").onmousedown =
-            dragMouseDown;
+          if (Modernizr.touch === true) {
+            document.getElementById(elmnt.id + "header").ontouchstart =
+              dragMouseDown;
+          } else {
+            document.getElementById(elmnt.id + "header").onmousedown =
+              dragMouseDown;
+          }
         } else {
           // otherwise, move the DIV from anywhere inside the DIV:
-          elmnt.onmousedown = dragMouseDown;
+          if (Modernizr.touch === true) {
+            elmnt.ontouchstart = dragMouseDown;
+          } else {
+            elmnt.onmousedown = dragMouseDown;
+          }
         }
 
         function dragMouseDown(e) {
@@ -167,9 +179,15 @@
           // get the mouse cursor position at startup:
           pos3 = e.clientX;
           pos4 = e.clientY;
-          document.onmouseup = closeDragElement;
+          if (Modernizr.touch === true) {
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+          } else {
+          }
+          document.ontouchend = closeDragElement;
           // call a function whenever the cursor moves:
-          document.onmousemove = elementDrag;
+          document.ontouchmove = elementDrag;
         }
 
         function elementDrag(e) {
@@ -191,9 +209,13 @@
         function closeDragElement() {
           // stop moving when mouse button is released:
           elmnt.style.outline = "0px";
-
-          document.onmouseup = null;
-          document.onmousemove = null;
+          if (Modernizr.touch === true) {
+            document.onmouseup = null;
+            document.onmousemove = null;
+          } else {
+            document.ontouchend = null;
+            document.ontouchmove = null;
+          }
         }
       }
     </script>
